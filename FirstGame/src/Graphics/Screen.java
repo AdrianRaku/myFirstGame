@@ -23,7 +23,7 @@ public class Screen {
         WIDTH = w;
         HEIGHT=h;
         
-        image= new BufferedImage(16 *12, 9 *12, BufferedImage.TYPE_INT_RGB);
+        image= new BufferedImage(16 *20, 9 *20, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
     }
     
@@ -38,6 +38,18 @@ public class Screen {
     public BufferedImage getImage(){
             return image; 
         }
+    
+    
+    public void renderSprite(int px, int py,  Sprite s)  
+    {
+        for(int y = 0 ;y < s.size; y++)
+        {
+            for (int x = 0; x < s.size;x++)
+            {
+                pixel( px + x, py + y, s.sp.pixels[(s.x*s.size) + x + ((s.y*s.size) + y * s.sp.WIDTH)]); 
+            }
+        }
+    }   
     public void renderSprite(int px, int py, int sx, int sy, int size, Spritesheet sp)  
     {
         for(int y = 0 ;y < size; y++)

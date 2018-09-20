@@ -6,12 +6,15 @@
 package core;
 
 import Graphics.Screen;
+import Graphics.Sprite;
 import Graphics.Spritesheet;
+import input.Keyboard;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -26,26 +29,31 @@ import sun.java2d.pipe.BufferedBufImgOps;
 public class Main extends Canvas implements Runnable  {
     public static final int WIDTH=1024, HEIGHT = 576;
     public static final int FRAMERATE = 60;
-   private JFrame frame;
-   private boolean RUNNING = false;
+    private JFrame frame;
+    private boolean RUNNING = false;
    
-   private Screen screen;
-   
+    public static final Sprite sprite = new Sprite(0,0,16, Spritesheet.def1);
+    private Screen screen;
+    private Keyboard keyboard = new Keyboard();
+    float x = 10 ,y = 10;
    public Main(){
        setPreferredSize(new Dimension(WIDTH,HEIGHT));
        setMaximumSize(new Dimension(WIDTH,HEIGHT));
        setMinimumSize(new Dimension(WIDTH,HEIGHT));
-       
+      
+       addKeyListener(keyboard);
        frame = new JFrame("gra");
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        
        frame.add(this, new BorderLayout().CENTER);
+      
+       
        frame.pack();
        
        frame.setLocationRelativeTo(null);
        frame.setResizable(false);
        frame.setVisible(true);
-       int i = 12;
+       int i = 20;
        screen = new Screen(16 * i,9 * i);
        
    }
@@ -95,10 +103,27 @@ public class Main extends Canvas implements Runnable  {
     
     
     private void update(){
+        keyboard.update();
+        float speed = 1f;
+        if (Keyboard.getKey(KeyEvent.VK_W))
+        {
+            y-=speed;
+        } else if (Keyboard.getKey(KeyEvent.VK_S))
+        {
+            y+=speed;
+        }
+        if (Keyboard.getKey(KeyEvent.VK_A))
+        {
+            x-=speed;
+        } else if (Keyboard.getKey(KeyEvent.VK_D))
+        {
+            x+=speed;
+        }
         
-        Random r= new Random();
-       
+        
     }
+    
+    
      private void render(){
         BufferStrategy bs = getBufferStrategy();
         if (bs==null){
@@ -112,7 +137,7 @@ public class Main extends Canvas implements Runnable  {
          screen.clear(0xFF9900);
          screen.frect(40, 10, 50, 50, 0x000000);
          
-         screen.renderSprite(40,40, 0, 0, 16, Spritesheet.def1);
+         screen.renderSprite((int)x,(int)y, sprite);
          
         g.drawImage(screen.getImage(),0,0,WIDTH+10,HEIGHT+10,null);
          g.dispose();
