@@ -3,14 +3,15 @@ package Graphics;
 
 
 public class Sprite {
-    public int x,y,size;
+    public int x,y,spriteWidth,spriteHeight;
     public Spritesheet sp;
     
-    public Sprite(int x, int y, int size, Spritesheet sp)
+    public Sprite(int x, int y, int height,int width, Spritesheet sp)
     {
         this.x = x;
         this.y = y;
-        this.size = size;
+        this.spriteHeight = height;
+        this.spriteWidth = width;
         this.sp = sp;
     }
 }

@@ -9,6 +9,7 @@ import Graphics.Screen;
 import Graphics.Sprite;
 import Graphics.Spritesheet;
 import input.Keyboard;
+import input.Mouse;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -32,16 +33,23 @@ public class Main extends Canvas implements Runnable  {
     private JFrame frame;
     private boolean RUNNING = false;
    
-    public static final Sprite sprite = new Sprite(0,0,16, Spritesheet.def1);
+   
     private Screen screen;
     private Keyboard keyboard = new Keyboard();
-    float x = 10 ,y = 10;
+    private Mouse mouse = new Mouse();
+    
+    
+    private GameStateManager gsm ;
+    
    public Main(){
        setPreferredSize(new Dimension(WIDTH,HEIGHT));
        setMaximumSize(new Dimension(WIDTH,HEIGHT));
        setMinimumSize(new Dimension(WIDTH,HEIGHT));
       
        addKeyListener(keyboard);
+       addMouseListener(mouse);
+       addMouseMotionListener(mouse);
+       
        frame = new JFrame("gra");
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        
@@ -55,6 +63,8 @@ public class Main extends Canvas implements Runnable  {
        frame.setVisible(true);
        int i = 20;
        screen = new Screen(16 * i,9 * i);
+       
+       gsm= new GameStateManager();
        
    }
    private void start(){
@@ -78,7 +88,7 @@ public class Main extends Canvas implements Runnable  {
    private long timeLast = System.nanoTime();
    
     public void run() {
-        while(RUNNING){
+        while(RUNNING && !gsm.exit){
             timeNow  = System.nanoTime();
             delta +=(timeNow - timeLast) / framtime;
             timeLast = timeNow;
@@ -93,8 +103,9 @@ public class Main extends Canvas implements Runnable  {
             
             if(System.currentTimeMillis() - timer >= 1000){
                 timer = System.currentTimeMillis();
-                System.out.println("FPS: " + FPS);
-                System.out.println("UPS: " + UPS);
+               // System.out.println("FPS: " + FPS);
+               // System.out.println("UPS: " + UPS);
+                frame.setTitle("FPS: " + FPS + ' ' + "UPS: " + UPS);
                 FPS = 0;
                 UPS = 0;
             }
@@ -104,22 +115,10 @@ public class Main extends Canvas implements Runnable  {
     
     private void update(){
         keyboard.update();
-        float speed = 1f;
-        if (Keyboard.getKey(KeyEvent.VK_W))
-        {
-            y-=speed;
-        } else if (Keyboard.getKey(KeyEvent.VK_S))
-        {
-            y+=speed;
-        }
-        if (Keyboard.getKey(KeyEvent.VK_A))
-        {
-            x-=speed;
-        } else if (Keyboard.getKey(KeyEvent.VK_D))
-        {
-            x+=speed;
-        }
-        
+//       
+        gsm.update();
+        System.out.println(" normal " +Mouse.x);
+        System.out.println(Mouse.Xpixel);
         
     }
     
@@ -135,9 +134,7 @@ public class Main extends Canvas implements Runnable  {
          g.fillRect(0, 0, WIDTH+10, HEIGHT+10);
          
          screen.clear(0xFF9900);
-         screen.frect(40, 10, 50, 50, 0x000000);
-         
-         screen.renderSprite((int)x,(int)y, sprite);
+         gsm.render(screen);
          
         g.drawImage(screen.getImage(),0,0,WIDTH+10,HEIGHT+10,null);
          g.dispose();

@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 public class Spritesheet {
     
     public static final Spritesheet def1 = new Spritesheet("/res/Spritesheet.png");
+    public static final Spritesheet bg_menu = new Spritesheet("/res/background.png");
     public  int WIDTH, HEIGHT;
     public  int[] pixels;
     
